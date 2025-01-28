@@ -20,7 +20,7 @@ const Login = () => {
 
       // Check if the logged-in user is admin
       if (res.data.userRole === 'admin') {
-        navigate('/admin-dashboard'); // Redirect to admin dashboard
+        navigate('/admin'); // Redirect to admin dashboard
       } else {
         navigate('/store'); // Redirect to store for regular users
       }
