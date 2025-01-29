@@ -3,7 +3,9 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
+import buyerRoutes from './routes/buyer.js'; // Import buyer routes
 import cors from 'cors';
+
 dotenv.config();
 
 const app = express();
@@ -15,7 +17,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes); // Integrate product routes
+app.use('/api/products', productRoutes); // Product routes
+app.use('/api/buyer', buyerRoutes);  // Combined cart and wishlist routes under buyer
 
 // Database Connection
 const PORT = process.env.PORT || 5000;
