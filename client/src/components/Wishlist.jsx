@@ -22,9 +22,16 @@ const Wishlist = () => {
         <p>Your wishlist is empty.</p>
       ) : (
         wishlist.map((item) => (
-          <div key={item.productId}>
-            <h3>{item.name}</h3>
-            <button onClick={() => dispatch(removeFromWishlist(item.productId))}>
+          <div key={item._id} className="wishlist-item">
+            {/* Accessing productId to get product details */}
+            <h3>{item.productId.name}</h3>
+            <p>{item.productId.description}</p>
+            <p>Price: ₹{item.productId.price}</p>
+            <img src={item.productId.product_img_url} alt={item.productId.name} width="100" />
+            <button
+              onClick={() => dispatch(removeFromWishlist(item._id))} // Using item._id to remove the wishlist item
+              className="remove-btn"
+            >
               Remove
             </button>
           </div>
