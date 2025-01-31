@@ -21,21 +21,28 @@ const Wishlist = () => {
       ) : wishlist.length === 0 ? (
         <p>Your wishlist is empty.</p>
       ) : (
-        wishlist.map((item) => (
-          <div key={item._id} className="wishlist-item">
-            {/* Accessing productId to get product details */}
-            <h3>{item.productId.name}</h3>
-            <p>{item.productId.description}</p>
-            <p>Price: ₹{item.productId.price}</p>
-            <img src={item.productId.product_img_url} alt={item.productId.name} width="100" />
-            <button
-              onClick={() => dispatch(removeFromWishlist(item._id))} // Using item._id to remove the wishlist item
-              className="remove-btn"
-            >
-              Remove
-            </button>
-          </div>
-        ))
+        wishlist.map((item) => {
+          // Check if productId exists
+          const product = item.productId;
+          if (!product) {
+            return null; // Skip this item if there's no productId
+          }
+
+          return (
+            <div key={item._id} className="wishlist-item">
+              <h3>{product.name}</h3>
+              <p>{product.description}</p>
+              <p>Price: ₹{product.price}</p>
+              <img src={product.product_img_url} alt={product.name} width="100" />
+              <button
+                onClick={() => dispatch(removeFromWishlist(product._id))}
+                className="remove-btn"
+              >
+                Remove
+              </button>
+            </div>
+          );
+        })
       )}
     </div>
   );

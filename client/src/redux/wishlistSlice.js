@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-  wishlist: [], // Make sure wishlist is initialized as an array
+  wishlist: [],
   status: "idle",
   error: null,
 };
@@ -12,25 +12,40 @@ export const fetchWishlist = createAsyncThunk("wishlist/fetchWishlist", async ()
   const res = await axios.get("http://localhost:5000/api/buyer/wishlist", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
-  // Ensure we return an array of products or an empty array
-  return Array.isArray(res.data.products) ? res.data.products : [];
+  return res.data.products || []; // Return an array of products
 });
 
 // Add product to wishlist
+// Add product to wishlist
 export const addToWishlist = createAsyncThunk("wishlist/addToWishlist", async (productId) => {
-  const res = await axios.post("http://localhost:5000/api/buyer/wishlist/add", { productId }, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-  // Ensure res.data contains the added product information
-  return res.data.product || {}; // Assuming the response has a 'product' key
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  const res = await axios.post(
+    "http://localhost:5000/api/buyer/wishlist/add",
+    { productId },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+
+  return res.data; // The response should contain the updated wishlist or the added product
 });
+
+
 
 // Remove from wishlist
 export const removeFromWishlist = createAsyncThunk("wishlist/removeFromWishlist", async (productId) => {
-  await axios.delete(`http://localhost:5000/api/wishlist/remove/${productId}`, {
+  if (!productId) throw new Error("Product ID is missing");
+
+  await axios.delete(`http://localhost:5000/api/buyer/wishlist/remove/${productId}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
-  return productId; // Return productId to remove from state
+
+  return productId; // Return productId to update the state correctly
 });
 
 const wishlistSlice = createSlice({
@@ -39,19 +54,19 @@ const wishlistSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Handling the fetching of the wishlist
-      .addCase(fetchWishlist.fulfilled, (state, action) => {
-        state.wishlist = Array.isArray(action.payload) ? action.payload : [];
-      })
-      // Handling the addition of a product to the wishlist
+    .addCase(fetchWishlist.fulfilled, (state, action) => {
+      state.wishlist = Array.isArray(action.payload) ? action.payload : [];
+    })
       .addCase(addToWishlist.fulfilled, (state, action) => {
-        if (action.payload && action.payload.productId) {
-          state.wishlist.push(action.payload); // Add the product to wishlist
+        if (Array.isArray(state.wishlist)) {
+          // Add the newly added product to the wishlist
+          state.wishlist.push(action.payload); // Assuming the payload contains the added product or the updated wishlist
+        } else {
+          state.wishlist = [action.payload];
         }
       })
-      // Handling the removal of a product from the wishlist
       .addCase(removeFromWishlist.fulfilled, (state, action) => {
-        state.wishlist = state.wishlist.filter((item) => item.productId !== action.payload);
+        state.wishlist = state.wishlist.filter((item) => item.productId._id !== action.payload);
       });
   },
 });

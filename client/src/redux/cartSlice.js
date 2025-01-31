@@ -32,7 +32,7 @@ export const addToCart = createAsyncThunk("cart/addToCart", async (product) => {
 
 // Remove from cart
 export const removeFromCart = createAsyncThunk("cart/removeFromCart", async (productId) => {
-  await axios.delete(`http://localhost:5000/api/cart/remove/${productId}`, {
+  await axios.delete(`http://localhost:5000/api/buyer/cart/remove/${productId}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return productId;

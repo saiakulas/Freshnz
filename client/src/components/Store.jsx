@@ -67,8 +67,9 @@ const Store = () => {
               Add to Cart
             </button>
             <button onClick={() => dispatch(addToWishlist(product._id))}>
-              Add to Wishlist
-            </button>
+  Add to Wishlist
+</button>
+
           </div>
         ))}
       </div>

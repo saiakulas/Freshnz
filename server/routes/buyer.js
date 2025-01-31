@@ -103,11 +103,10 @@ router.post('/wishlist/add', verifyUser, async (req, res) => {
   }
 });
 
-// Remove from wishlist
 router.delete('/wishlist/remove/:productId', verifyUser, async (req, res) => {
   try {
-    const { productId } = req.params;
-    const userId = req.user.id;
+    const { productId } = req.params; // Extract productId from URL
+    const userId = req.user.id; // Extract user ID from token
 
     let wishlist = await Wishlist.findOne({ userId });
 
@@ -115,13 +114,33 @@ router.delete('/wishlist/remove/:productId', verifyUser, async (req, res) => {
       return res.status(404).json({ message: 'Wishlist not found' });
     }
 
-    wishlist.products = wishlist.products.filter(item => item.productId.toString() !== productId);
-    await wishlist.save();
+    // Debugging logs
+    console.log(`User ID: ${userId}`);
+    console.log(`Removing product ID: ${productId}`);
+    console.log('Wishlist before removal:', wishlist.products);
+
+    // Ensure productId is a string for comparison
+    const newProducts = wishlist.products.filter(
+      (item) => item.productId.toString() !== productId
+    );
+
+    // If no change, return error message
+    if (newProducts.length === wishlist.products.length) {
+      return res.status(404).json({ message: 'Product not found in wishlist' });
+    }
+
+    wishlist.products = newProducts; // Update wishlist products array
+
+    await wishlist.save(); // ✅ Ensure changes are saved in DB
+
+    console.log('Wishlist after removal:', wishlist.products); // Debugging log
 
     res.status(200).json({ message: 'Product removed from wishlist', wishlist });
   } catch (error) {
-    res.status(500).json({ message: 'Error removing product from wishlist', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 });
+
 
 export default router;
