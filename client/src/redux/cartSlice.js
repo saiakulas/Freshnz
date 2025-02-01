@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-  cart: [], // ✅ Ensure initial state is always an array
+  cart: [], // Ensure initial state is always an array
   status: "idle",
   error: null,
 };
@@ -12,7 +12,7 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
   const res = await axios.get("http://localhost:5000/api/buyer/cart", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
-  return res.data.products || []; // Return the 'products' array from the response
+  return Array.isArray(res.data.products) ? res.data.products : []; // Safeguard for non-array data
 });
 
 // Add product to cart
@@ -45,16 +45,19 @@ const cartSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCart.fulfilled, (state, action) => {
-        state.cart = Array.isArray(action.payload) ? action.payload : []; // ✅ Ensure state.cart is an array
+        // Ensure cart is an array
+        state.cart = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(addToCart.fulfilled, (state, action) => {
+        // Ensure cart is always an array and add the new product
         if (Array.isArray(state.cart)) {
-          state.cart.push(action.payload); // ✅ Ensure push works only if state.cart is an array
+          state.cart.push(action.payload);
         } else {
-          state.cart = [action.payload]; // ✅ Convert to array if it's not
+          state.cart = [action.payload];
         }
       })
       .addCase(removeFromCart.fulfilled, (state, action) => {
+        // Remove product based on the productId
         state.cart = state.cart.filter((item) => item.productId !== action.payload);
       });
   },

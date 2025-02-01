@@ -142,5 +142,103 @@ router.delete('/wishlist/remove/:productId', verifyUser, async (req, res) => {
   }
 });
 
+// Get user's cart
+router.get('/cart', verifyUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cart = await Cart.findOne({ userId })
+      .populate('products.productId', 'name price') // Populate product details
+      .exec();
+    
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+    
+    res.json(cart); // Send populated cart data
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching cart', error: error.message });
+  }
+});
+
+
+// Get user's wishlist
+// Fetch wishlist with populated product details
+router.get('/wishlist', verifyUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find the wishlist for the current user and populate the product details
+    const wishlist = await Wishlist.findOne({ userId })
+      .populate('products.productId', 'name price')  // Populate with name and price of the product
+      .exec();
+
+    if (!wishlist) {
+      return res.status(404).json({ message: 'Wishlist not found' });
+    }
+
+    res.status(200).json(wishlist); // Return populated wishlist
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching wishlist', error: error.message });
+  }
+});
+// Increment product quantity in the cart
+router.put('/cart/increment/:productId', verifyUser, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.id;
+
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    const productIndex = cart.products.findIndex(item => item.productId.toString() === productId);
+    if (productIndex === -1) {
+      return res.status(404).json({ message: 'Product not found in cart' });
+    }
+
+    // Increment the quantity
+    cart.products[productIndex].quantity += 1;
+    await cart.save();
+
+    res.status(200).json({ message: 'Product quantity incremented', cart });
+  } catch (error) {
+    res.status(500).json({ message: 'Error incrementing product quantity', error: error.message });
+  }
+});
+
+// Decrement product quantity in the cart
+router.put('/cart/decrement/:productId', verifyUser, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.id;
+
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    const productIndex = cart.products.findIndex(item => item.productId.toString() === productId);
+    if (productIndex === -1) {
+      return res.status(404).json({ message: 'Product not found in cart' });
+    }
+
+    // Ensure quantity doesn't go below 1
+    if (cart.products[productIndex].quantity > 1) {
+      cart.products[productIndex].quantity -= 1;
+    } else {
+      return res.status(400).json({ message: 'Cannot decrement quantity below 1' });
+    }
+
+    await cart.save();
+    res.status(200).json({ message: 'Product quantity decremented', cart });
+  } catch (error) {
+    res.status(500).json({ message: 'Error decrementing product quantity', error: error.message });
+  }
+});
+
+
 
 export default router;
