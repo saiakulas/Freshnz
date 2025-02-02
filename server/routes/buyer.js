@@ -147,7 +147,7 @@ router.get('/cart', verifyUser, async (req, res) => {
   try {
     const userId = req.user.id;
     const cart = await Cart.findOne({ userId })
-      .populate('products.productId', 'name price') // Populate product details
+      .populate('products.productId', 'name price  product_img_url') // Populate product details
       .exec();
     
     if (!cart) {
@@ -169,7 +169,7 @@ router.get('/wishlist', verifyUser, async (req, res) => {
 
     // Find the wishlist for the current user and populate the product details
     const wishlist = await Wishlist.findOne({ userId })
-      .populate('products.productId', 'name price')  // Populate with name and price of the product
+      .populate('products.productId', 'name price  product_img_url')  // Populate with name and price of the product
       .exec();
 
     if (!wishlist) {

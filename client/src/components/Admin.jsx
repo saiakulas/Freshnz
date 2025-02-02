@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { 
+  Box, Button, FormControl, FormLabel, Input, 
+  Textarea, Modal, ModalOverlay, ModalContent, 
+  ModalHeader, ModalBody, ModalCloseButton, useDisclosure, 
+  useToast 
+} from '@chakra-ui/react';
 
 const Admin = () => {
-  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -12,6 +17,9 @@ const Admin = () => {
     category: '',
     farmName: '',
   });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,8 +33,13 @@ const Admin = () => {
       const response = await axios.post('http://localhost:5000/api/products/add', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert('Product added successfully!');
-      setShowModal(false);
+      toast({
+        title: 'Product added successfully!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
       setFormData({
         name: '',
         description: '',
@@ -37,89 +50,113 @@ const Admin = () => {
         farmName: '',
       });
     } catch (error) {
-      alert('Error adding product: ' + error.response?.data?.message || error.message);
+      toast({
+        title: 'Error adding product',
+        description: error.response?.data?.message || error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      <p>Welcome, Admin!</p>
+    <Box p={5}>
+      <Box textAlign="center" mb={5}>
+        <h2 className="admin-title">Admin Dashboard</h2>
+        <p>Welcome, Admin!</p>
+      </Box>
 
       {/* Button to trigger modal */}
-      <button onClick={() => setShowModal(true)}>
+      <Button colorScheme="teal" onClick={onOpen}>
         Add New Product
-      </button>
+      </Button>
 
       {/* Modal for adding a new product */}
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setShowModal(false)}>&times;</span>
-            <h3>Add New Product</h3>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add New Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
             <form onSubmit={handleSubmit}>
-              <label>Product Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              <label>Description:</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-              />
-              <label>Price:</label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                required
-              />
-              <label>Discount:</label>
-              <input
-                type="number"
-                name="discount"
-                value={formData.discount}
-                onChange={handleChange}
-                required
-              />
-              <label>Product Image URL:</label>
-              <input
-                type="text"
-                name="product_img_url"
-                value={formData.product_img_url}
-                onChange={handleChange}
-              />
-              <label>Category:</label>
-              <input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-              />
-              <label>Farm Name:</label>
-              <input
-                type="text"
-                name="farmName"
-                value={formData.farmName}
-                onChange={handleChange}
-                required
-              />
-              <button type="submit">
+              <FormControl id="name" mb={3} isRequired>
+                <FormLabel>Product Name</FormLabel>
+                <Input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl id="description" mb={3} isRequired>
+                <FormLabel>Description</FormLabel>
+                <Textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl id="price" mb={3} isRequired>
+                <FormLabel>Price</FormLabel>
+                <Input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl id="discount" mb={3} isRequired>
+                <FormLabel>Discount</FormLabel>
+                <Input
+                  type="number"
+                  name="discount"
+                  value={formData.discount}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl id="product_img_url" mb={3}>
+                <FormLabel>Product Image URL</FormLabel>
+                <Input
+                  type="text"
+                  name="product_img_url"
+                  value={formData.product_img_url}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl id="category" mb={3} isRequired>
+                <FormLabel>Category</FormLabel>
+                <Input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl id="farmName" mb={3} isRequired>
+                <FormLabel>Farm Name</FormLabel>
+                <Input
+                  type="text"
+                  name="farmName"
+                  value={formData.farmName}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <Button type="submit" colorScheme="teal" width="100%" mt={4}>
                 Add Product
-              </button>
+              </Button>
             </form>
-          </div>
-        </div>
-      )}
-    </div>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </Box>
   );
 };
 

@@ -59,24 +59,47 @@ router.get('/:id', async (req, res) => {
 
 // Get products by category
 router.get('/category/:category', async (req, res) => {
+  const { category } = req.params;
   try {
-    const { category } = req.params;
-    const products = await Product.find({ category });
-    res.status(200).json(products);
+    const products = await Product.find({ category: category });
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found in this category' });
+    }
+    res.status(200).json(products);  // Return the filtered products
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching category products', error: error.message });
+    res.status(500).json({ message: 'Error fetching products by category', error: error.message });
+  }
+});
+
+
+
+// Get all distinct farm names
+router.get('/farms', async (req, res) => {
+  try {
+    const farms = await Product.distinct('farmName');  // Get all unique farm names
+    res.status(200).json(farms);  // Return distinct farm names as a list
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching farms', error: error.message });
   }
 });
 
 // Get products by farm name
 router.get('/farm/:farmName', async (req, res) => {
+  const { farmName } = req.params;
   try {
-    const { farmName } = req.params;
+    // Fetch products where the farmName matches the requested farm name
     const products = await Product.find({ farmName });
-    res.status(200).json(products);
+    
+    if (!products.length) {
+      return res.status(404).json({ message: `No products found from farm: ${farmName}` });
+    }
+    
+    res.status(200).json(products);  // Return the products from the selected farm
   } catch (error) {
     res.status(500).json({ message: 'Error fetching farm products', error: error.message });
   }
 });
+
+
 
 export default router;

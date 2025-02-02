@@ -2,6 +2,20 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart, removeFromCart } from "../redux/cartSlice";
 import axios from "axios"; // For API calls
+import {
+  Box,
+  Button,
+  Text,
+  Flex,
+  IconButton,
+  Heading,
+  Spinner,
+  Stack,
+  Divider,
+  Image,
+  Grid,
+} from "@chakra-ui/react";
+import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa"; // Icons for minus, plus, and trash
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -16,12 +30,10 @@ const Cart = () => {
     }
   }, [dispatch, status]);
 
-  // Function to get token from localStorage or another store
   const getAuthToken = () => {
     return localStorage.getItem("authToken"); // Replace with where your token is stored
   };
 
-  // Add token to request headers
   const getHeaders = () => {
     const token = getAuthToken();
     return {
@@ -29,15 +41,14 @@ const Cart = () => {
     };
   };
 
-  // Increment product quantity
   const incrementQuantity = async (productId) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No token found");
       }
-  
-      const response = await axios.put(
+
+      await axios.put(
         `http://localhost:5000/api/buyer/cart/increment/${productId}`,
         {},
         {
@@ -46,111 +57,142 @@ const Cart = () => {
       );
       dispatch(fetchCart()); // Refetch the cart after incrementing
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        // Handle expired token or unauthorized error
-        console.error("Unauthorized access. Please log in again.");
-        // Redirect to login page or show login prompt
-      } else {
-        console.error("Error incrementing quantity:", error);
-      }
+      console.error("Error incrementing quantity:", error);
     }
   };
-  
 
   const decrementQuantity = async (productId) => {
     try {
       const token = localStorage.getItem("token");
-  
+
       if (!token) {
         throw new Error("No token found");
       }
-  
-      const response = await axios.put(
+
+      await axios.put(
         `http://localhost:5000/api/buyer/cart/decrement/${productId}`,
         {},
         {
-          headers: { Authorization: `Bearer ${token}` }, // Make sure token is included in the headers
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
       dispatch(fetchCart()); // Refetch the cart after decrementing the quantity
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized access. Please log in again.");
-        // Handle expired or invalid token here, maybe redirect to the login page
-      } else {
-        console.error("Error decrementing quantity:", error);
-      }
+      console.error("Error decrementing quantity:", error);
     }
   };
-  
 
-  // Handle API errors
   if (status === "failed") {
     return (
-      <div className="container p-4">
-        <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
-        <p className="text-red-500">Failed to load cart. Please try again later.</p>
-      </div>
+      <Box p={4}>
+        <Heading as="h2" size="lg" mb={4}>
+          Shopping Cart
+        </Heading>
+        <Text color="red.500">Failed to load cart. Please try again later.</Text>
+      </Box>
     );
   }
 
   return (
-    <div className="container p-4">
-      <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
+    <Box p={4}>
+      <Heading as="h2" size="lg" mb={4}>
+        Shopping Cart
+      </Heading>
       {status === "loading" ? (
-        <div className="flex items-center justify-center p-4">
-          <p className="text-gray-600">Loading your cart...</p>
-        </div>
+        <Flex justify="center" align="center" p={4}>
+          <Spinner size="lg" />
+          <Text ml={3}>Loading your cart...</Text>
+        </Flex>
       ) : cart.length === 0 ? (
-        <div className="text-center p-8 bg-gray-50 rounded-lg">
-          <p className="text-gray-600">Your cart is empty.</p>
-        </div>
+        <Box textAlign="center" p={8} bg="gray.50" borderRadius="md">
+          <Text color="gray.600">Your cart is empty.</Text>
+        </Box>
       ) : (
-        <div className="space-y-4">
+        <Grid
+          templateColumns="repeat(auto-fill, minmax(280px, 1fr))"
+          gap={6}
+          mb={6}
+        >
           {cart.map((item) => {
             const { productId, quantity } = item;
             if (!productId?._id) {
-              console.error('Cart item missing productId:', item);
+              console.error("Cart item missing productId:", item);
               return null;
             }
 
             return (
-              <div 
+              <Box
                 key={productId._id}
-                className="flex items-center justify-between p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                p={4}
+                borderRadius="lg"
+                boxShadow="md"
+                mb={4}
+                _hover={{ boxShadow: "lg" }}
+                overflow="hidden"
+                bg="white"
+                border="1px"
+                borderColor="gray.200"
               >
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{productId.name}</h3>
-                  <p className="text-gray-600">Price: ${productId.price}</p>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => decrementQuantity(productId._id)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 border rounded-md"
-                  >
-                    -
-                  </button>
-                  <span className="text-lg font-semibold">{quantity}</span>
-                  <button
-                    onClick={() => incrementQuantity(productId._id)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 border rounded-md"
-                  >
-                    +
-                  </button>
-                </div>
-                <button
-                  onClick={() => dispatch(removeFromCart(productId._id))}
-                  className="px-4 py-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
-                >
-                  Remove
-                </button>
-              </div>
+                <Flex direction="column" gap={4}>
+                  <Image
+                    src={productId.product_img_url} 
+                    alt={productId.name}
+                    borderRadius="lg"
+                    boxSize="200px"
+                    objectFit="cover"
+                    mb={4}
+                  />
+                  <Stack spacing="3">
+                    <Heading size="md" color="black">
+                      {productId.name}
+                    </Heading>
+                    {/* Displaying Farm Name */}
+                    <Text color="gray.500" fontSize="sm">
+                      Farm: {productId.farmName}
+                    </Text>
+                    <Text color="blue.600" fontSize="xl">
+                      ₹{productId.price}
+                    </Text>
+                  </Stack>
+                  <Divider />
+                  <Flex justify="space-between" align="center">
+                    <Flex align="center" gap={4}>
+                      <IconButton
+                        onClick={() => decrementQuantity(productId._id)}
+                        icon={<FaMinus />}
+                        variant="outline"
+                        colorScheme="teal"
+                        aria-label="Decrement Quantity"
+                        size="sm"
+                      />
+                      <Text fontSize="lg" fontWeight="bold">
+                        {quantity}
+                      </Text>
+                      <IconButton
+                        onClick={() => incrementQuantity(productId._id)}
+                        icon={<FaPlus />}
+                        variant="outline"
+                        colorScheme="teal"
+                        aria-label="Increment Quantity"
+                        size="sm"
+                      />
+                    </Flex>
+                    <IconButton
+                      onClick={() => dispatch(removeFromCart(productId._id))}
+                      icon={<FaTrashAlt />}
+                      colorScheme="red"
+                      aria-label="Remove Item"
+                      size="sm"
+                      variant="outline"
+                    />
+                  </Flex>
+                </Flex>
+              </Box>
             );
           })}
-        </div>
+        </Grid>
       )}
-    </div>
+    </Box>
   );
 };
 
