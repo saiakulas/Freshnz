@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Box, Button, Center, Heading, Stack, Text, SimpleGrid, Image, useColorMode, useBreakpointValue, Fade, useDisclosure } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
+// Import the image from the assets folder
+import backImage from '../assets/back.jpg';  // Adjust the path if necessary
+
 const products = [
   {
     id: 1,
@@ -75,7 +78,18 @@ const Home = () => {
         borderBottom="1px solid" 
         borderColor={colorMode === 'dark' ? 'gray.700' : 'gray.300'}
       >
-        <Heading size="md" color={colorMode === 'dark' ? 'white' : 'black'}>Store</Heading>
+        <Box display="flex" alignItems="center" mb={4}>
+          <Heading size="lg" mr={2}>
+            Freshnz
+          </Heading>
+          <Box
+            bg="#54AC00"
+            borderRadius="full"
+            width="20px"
+            height="20px"
+            display="inline-block"
+          />
+        </Box>
         <Stack direction="row" spacing={4}>
           <Button color="#54AC00" variant="link" onClick={() => navigate('/login')}>
             Login
@@ -89,7 +103,9 @@ const Home = () => {
       {/* Hero Section with Image Slider */}
       <Box
         position="relative"
-        bgGradient="linear(to-r, #54AC00, green.400)"
+        bgImage={`url(${backImage})`}  // Use the imported image
+        bgSize="cover"
+        bgPosition="center"
         color="white"
         py={20}
         px={10}
@@ -98,9 +114,6 @@ const Home = () => {
       >
         <Fade in={show}>
           <Box>
-            <Heading fontSize="5xl" fontWeight="bold" mb={4} transition="all 0.5s ease">
-              Welcome to the Store
-            </Heading>
             <Text fontSize="2xl" mb={8}>
               Explore the best products curated just for you!
             </Text>
@@ -164,7 +177,7 @@ const Home = () => {
       <Box bg={colorMode === 'dark' ? 'gray.900' : 'gray.200'} py={6}>
         <Center>
           <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.700'}>
-            © 2023 Store. All rights reserved.
+            © 2025 Store. All rights reserved.
           </Text>
         </Center>
       </Box>
