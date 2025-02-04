@@ -17,11 +17,10 @@ import {
   Badge,
   Divider,
   Select,
+  Center,
 } from "@chakra-ui/react";
-import { FaCartPlus, FaHeart } from "react-icons/fa"; 
+import { FaCartPlus, FaHeart } from "react-icons/fa";
 import { IoMdLogOut } from "react-icons/io";
-
-// React Icons for cart, wishlist, and logout
 
 const Store = () => {
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ const Store = () => {
   const cart = useSelector((state) => state.cart.cart);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const [products, setProducts] = useState([]);
-  const [categories] = useState(["Eggs", "Fruits", "Vegetables"]);
+  const [categories] = useState(["Eggs", "Fruits", "Vegetables","meat","Honey"]);
   const [farms] = useState(["Green Valley Farm", "Vineyard Harvest", "Vridha Farms"]);
   const { colorMode } = useColorMode();
 
@@ -57,13 +56,11 @@ const Store = () => {
     fetchProducts();
   }, [dispatch, navigate]);
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
 
-  // Handle category change
   const handleCategoryChange = async (event) => {
     const category = event.target.value;
     try {
@@ -74,7 +71,6 @@ const Store = () => {
     }
   };
 
-  // Handle farm name change
   const handleFarmChange = async (event) => {
     const farmName = event.target.value;
     try {
@@ -92,7 +88,6 @@ const Store = () => {
         <Heading size="lg">Freshnz</Heading>
 
         <Box display="flex" gap={4}>
-          {/* Shop by Categories Dropdown */}
           <Select
             placeholder="Shop by Category"
             onChange={handleCategoryChange}
@@ -106,7 +101,6 @@ const Store = () => {
             ))}
           </Select>
 
-          {/* Shop by Farm Dropdown */}
           <Select
             placeholder="Shop by Farm"
             onChange={handleFarmChange}
@@ -126,18 +120,18 @@ const Store = () => {
               icon={<FaCartPlus />}
               onClick={() => navigate("/cart")}
               aria-label="Go to Cart"
-              color="black" // Black color for the Cart icon
+              color="black"
               size="sm"
             />
-           <Badge
-  bg="#54AC00" // Custom background color (green)
-  color="white" // White text color for contrast
-  borderRadius="full"
-  px={2}
-  position="absolute"
-  top="-5px"
-  right="-5px"
->
+            <Badge
+              bg="#54AC00"
+              color="white"
+              borderRadius="full"
+              px={2}
+              position="absolute"
+              top="-5px"
+              right="-5px"
+            >
               {cart.length}
             </Badge>
           </Box>
@@ -148,53 +142,60 @@ const Store = () => {
               icon={<FaHeart />}
               onClick={() => navigate("/wishlist")}
               aria-label="Go to Wishlist"
-              color="black" // Black color for the Wishlist icon
+              color="black"
               size="sm"
             />
-           <Badge
-  bg="#54AC00" // Custom background color (green)
-  color="white" // White text color for contrast
-  borderRadius="full"
-  px={2}
-  position="absolute"
-  top="-5px"
-  right="-5px"
->
+            <Badge
+              bg="#54AC00"
+              color="white"
+              borderRadius="full"
+              px={2}
+              position="absolute"
+              top="-5px"
+              right="-5px"
+            >
               {wishlist.length}
             </Badge>
           </Box>
 
           {/* Logout Icon */}
           <IconButton
-  icon={<IoMdLogOut />}
-  onClick={handleLogout}
-  aria-label="Logout"
-  size="lg"  // Set the size to large
-  color="black"  // Set the icon color to black
-  bg="transparent"  // Keep the background transparent
-  _hover={{
-    bg: "grey.200",  // Change background on hover, if desired
-  }}
-  fontSize="25px"  // Increase the font size of the icon
-/>
-
-
+            icon={<IoMdLogOut />}
+            onClick={handleLogout}
+            aria-label="Logout"
+            size="lg"
+            color="black"
+            bg="transparent"
+            _hover={{
+              bg: "grey.200",
+            }}
+            fontSize="25px"
+          />
         </Box>
       </Box>
 
       {/* Product Grid */}
       <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(220px, 1fr))" gap={6}>
         {products.map((product) => (
-          <Box key={product._id} borderRadius="lg" boxShadow="md" position="relative" overflow="hidden" height="450px">
+          <Box
+            key={product._id}
+            borderRadius="lg"
+            boxShadow="md"
+            position="relative"
+            overflow="hidden"
+            height="450px"
+          >
             {/* Image */}
-            <Image
-              src={product.product_img_url}
-              alt={product.name}
-              borderRadius="lg"
-              objectFit="cover"
-              boxSize="220px"
-              mb={4}
-            />
+            <Center>
+              <Image
+                src={product.product_img_url}
+                alt={product.name}
+                borderRadius="lg"
+                objectFit="cover"
+                boxSize="220px"
+                mb={4}
+              />
+            </Center>
 
             {/* Product Info */}
             <Stack mt="6" spacing="3" p={4} flex="1">
@@ -211,23 +212,22 @@ const Store = () => {
             {/* Add to Cart and Wishlist heart icon */}
             <Box p={4}>
               <ButtonGroup spacing="2" w="100%" justifyContent="space-between">
-              <Button
-  variant="solid"
-  backgroundColor="#54AC00" // Green color for the "Add to Cart" button
-  color="white" // White text color
-  onClick={() => dispatch(addToCart({ productId: product._id, quantity: 1 }))} 
->
-  Add to Cart
-</Button>
+                <Button
+                  variant="solid"
+                  backgroundColor="#54AC00"
+                  color="white"
+                  onClick={() => dispatch(addToCart({ productId: product._id, quantity: 1 }))}
+                >
+                  Add to Cart
+                </Button>
 
-<IconButton
-  icon={<FaHeart />}
-  onClick={() => dispatch(addToWishlist(product._id))}
-  aria-label="Add to Wishlist"
-  color="black" // Set the icon color to black
-  size="sm"
-/>
-
+                <IconButton
+                  icon={<FaHeart />}
+                  onClick={() => dispatch(addToWishlist(product._id))}
+                  aria-label="Add to Wishlist"
+                  color="black"
+                  size="sm"
+                />
               </ButtonGroup>
             </Box>
           </Box>
