@@ -77,10 +77,10 @@ const Home = () => {
       >
         <Heading size="md" color={colorMode === 'dark' ? 'white' : 'black'}>Store</Heading>
         <Stack direction="row" spacing={4}>
-          <Button colorScheme="teal" variant="link" onClick={() => navigate('/login')}>
+          <Button color="#54AC00" variant="link" onClick={() => navigate('/login')}>
             Login
           </Button>
-          <Button colorScheme="teal" variant="link" onClick={() => navigate('/register')}>
+          <Button color="#54AC00" variant="link" onClick={() => navigate('/register')}>
             Register
           </Button>
         </Stack>
@@ -89,7 +89,7 @@ const Home = () => {
       {/* Hero Section with Image Slider */}
       <Box
         position="relative"
-        bgGradient="linear(to-r, teal.500, green.400)"
+        bgGradient="linear(to-r, #54AC00, green.400)"
         color="white"
         py={20}
         px={10}
@@ -108,11 +108,11 @@ const Home = () => {
         </Fade>
 
         <Button
-          colorScheme="teal"
+          color="#54AC00"
           size="lg"
           mb={4}
           onClick={toggleFade}
-          _hover={{ bg: 'teal.600' }}
+          _hover={{ bg: '#54AC00' }}
         >
           See What's New
         </Button>
@@ -152,15 +152,13 @@ const Home = () => {
                   {product.name}
                 </Heading>
                 <Text mb={4}>{product.description}</Text>
-                <Button colorScheme="teal" size="sm" onClick={() => alert('View product')}>
+                <Button color="#54AC00" size="sm" onClick={() => alert('View product')}>
                   View Product
                 </Button>
               </Box>
             ))}
         </SimpleGrid>
       </Box>
-
-     
 
       {/* Footer Section */}
       <Box bg={colorMode === 'dark' ? 'gray.900' : 'gray.200'} py={6}>
