@@ -22,7 +22,7 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart.cart);
   const status = useSelector((state) => state.cart.status);
 
-  const BASE_URL = "http://localhost:5000/api/buyer"; // Backend base URL
+  const BASE_URL = "https://freshnz.onrender.com/api/buyer"; // Backend base URL
 
   useEffect(() => {
     if (status === "idle") {
@@ -49,7 +49,7 @@ const Cart = () => {
       }
 
       await axios.put(
-        `http://localhost:5000/api/buyer/cart/increment/${productId}`,
+        `https://freshnz.onrender.com/api/buyer/cart/increment/${productId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -70,7 +70,7 @@ const Cart = () => {
       }
 
       await axios.put(
-        `http://localhost:5000/api/buyer/cart/decrement/${productId}`,
+        `https://freshnz.onrender.com/api/buyer/cart/decrement/${productId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
