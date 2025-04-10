@@ -9,7 +9,7 @@ const initialState = {
 
 // Fetch wishlist
 export const fetchWishlist = createAsyncThunk("wishlist/fetchWishlist", async () => {
-  const res = await axios.get("http://localhost:5000/api/buyer/wishlist", {
+  const res = await axios.get("https://freshnz.onrender.com/api/buyer/wishlist", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data.products || []; // Return an array of products
@@ -41,7 +41,7 @@ export const addToWishlist = createAsyncThunk("wishlist/addToWishlist", async (p
 export const removeFromWishlist = createAsyncThunk("wishlist/removeFromWishlist", async (productId) => {
   if (!productId) throw new Error("Product ID is missing");
 
-  await axios.delete(`http://localhost:5000/api/buyer/wishlist/remove/${productId}`, {
+  await axios.delete(`https://freshnz.onrender.com/api/buyer/wishlist/remove/${productId}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
