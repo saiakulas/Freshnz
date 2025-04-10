@@ -7,6 +7,7 @@ import Store from './components/Store';
 import Admin from './components/Admin';
 import Cart from './components/Cart';
 import Wishlist from './components/Wishlist';
+import Billing from './components/Billing';
 const App = () => {
   return (
     <Router>
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/store" element={<Store />} />
+        <Route path="/billing" element={<Billing />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
       </Routes>

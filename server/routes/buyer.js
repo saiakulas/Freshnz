@@ -53,31 +53,8 @@ router.delete('/cart/remove/:productId', verifyUser, async (req, res) => {
   }
 });
 
-// Checkout and handle billing
-router.post('/cart/checkout', verifyUser, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const cart = await Cart.findOne({ userId });
 
-    if (!cart || cart.products.length === 0) {
-      return res.status(400).json({ message: 'Cart is empty' });
-    }
 
-    // Calculate total price
-    let totalPrice = 0;
-    for (const item of cart.products) {
-      const product = await Product.findById(item.productId);
-      totalPrice += product.price * item.quantity;
-    }
-
-    // Example of billing process
-    // This could involve payment processing, such as Stripe or PayPal
-
-    res.status(200).json({ message: 'Checkout successful', totalPrice });
-  } catch (error) {
-    res.status(500).json({ message: 'Error during checkout', error: error.message });
-  }
-});
 
 // Add to wishlist
 router.post('/wishlist/add', verifyUser, async (req, res) => {
