@@ -81,7 +81,7 @@ const Store = () => {
   const handleCategoryChange = async (event) => {
     const category = event.target.value;
     try {
-      const res = await axios.get(`http://localhost:5000/api/products/category/${category}`);
+      const res = await axios.get(`https://freshnz.onrender.com/api/products/category/${category}`);
       setProducts(res.data);
       setFilteredProducts(res.data); // Reset to filtered products
     } catch (err) {
@@ -92,7 +92,7 @@ const Store = () => {
   const handleFarmChange = async (event) => {
     const farmName = event.target.value;
     try {
-      const res = await axios.get(`http://localhost:5000/api/products/farm/${farmName}`);
+      const res = await axios.get(`https://freshnz.onrender.com/api/products/farm/${farmName}`);
       setProducts(res.data);
       setFilteredProducts(res.data); // Reset to filtered products
     } catch (err) {
