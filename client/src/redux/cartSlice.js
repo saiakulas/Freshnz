@@ -9,7 +9,7 @@ const initialState = {
 
 // Fetch cart
 export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
-  const res = await axios.get("http://localhost:5000/api/buyer/cart", {
+  const res = await axios.get("https://freshnz.onrender.com/api/buyer/cart", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return Array.isArray(res.data.products) ? res.data.products : []; // Safeguard for non-array data
@@ -23,7 +23,7 @@ export const addToCart = createAsyncThunk("cart/addToCart", async (product) => {
     throw new Error("No token found");
   }
 
-  const res = await axios.post("http://localhost:5000/api/buyer/cart/add", product, {
+  const res = await axios.post("https://freshnz.onrender.com/api/buyer/cart/add", product, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -32,7 +32,7 @@ export const addToCart = createAsyncThunk("cart/addToCart", async (product) => {
 
 // Remove from cart
 export const removeFromCart = createAsyncThunk("cart/removeFromCart", async (productId) => {
-  await axios.delete(`http://localhost:5000/api/buyer/cart/remove/${productId}`, {
+  await axios.delete(`https://freshnz.onrender.com/api/buyer/cart/remove/${productId}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return productId;
