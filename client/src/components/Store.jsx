@@ -46,7 +46,7 @@ const Store = () => {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/products", {
+        const res = await axios.get("https://freshnz.onrender.com/api/products", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProducts(res.data);
