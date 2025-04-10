@@ -30,7 +30,7 @@ const Admin = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-      const response = await axios.post('http://localhost:5000/api/products/add', formData, {
+      const response = await axios.post('https://freshnz.onrender.com/api/products/add', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast({
